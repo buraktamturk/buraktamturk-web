@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>@ViewBag.title</title>
+		
+		@RenderSection("meta", required: false)
+		<meta content='Burak Tamturks Offical Blog' property='og:site_name' />
+		<link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Burak Tamturk's Blog'" />
+		
+	    <style>
+	      body {
+	        max-width: 40em;
+	        margin: 2em;
+		  }
+		  
+		  pre {
+		    white-space: pre-wrap;       /* CSS 3 */
+		    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+		    white-space: -pre-wrap;      /* Opera 4-6 */
+		    white-space: -o-pre-wrap;    /* Opera 7 */
+		    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+		}
+	
+		#disqus_thread{
+	     position: relative;
+		}
+			
+		#disqus_thread:after{
+	     content: "";
+	     display: block;
+	     height: 55px;
+	     width: 100%;
+	     position: absolute;
+	     bottom: 0px;
+	     background:white;
+		}
+	
+	      dt { margin-top: 1em; }
+	      dd { margin-bottom: 1em; }
+		  
+		  p {
+			  line-height: 1.4;
+		  }
+	
+	      table {
+	        margin: 1em 0;
+	        padding: 0;
+	      }
+	
+	      table th {
+	        text-align: left;
+	        padding: 0.2em;
+	        white-space: nowrap;
+	      }
+	
+	      table td {
+	        padding: 0.2em;
+	        text-align: left;
+	        white-space: nowrap;
+	      }
+	    </style>
+		<link rel="stylesheet" href="/assets/styles/xcode.css" />
+		<script src="/assets/highlight.pack.js" onload="window.hljs.initHighlightingOnLoad();" async defer></script>
+	</head>
+	<body>
+		
+		@RenderBody()
+		
+	</body>
+</html>

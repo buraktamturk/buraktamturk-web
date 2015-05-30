@@ -1,0 +1,15 @@
+@model List<IOrderedEnumerable<org.buraktamturk.web.Models.posts>>
+@{
+	ViewBag.title = "Burak Tamturk's offical blog";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h1>Hello World</h1>
+<p>Hello, My name is Burak Tamtürk, I am studying English Translation and Interpreting in Turkey, I am interested in reserve engineering, system administration, clustering and programming (both low level and high level) but specially at reserve engineering, security and journalism (for real). </p>
+<p>I'll to keep my blog simple and clean because I want it to be compatible (even on elinks!), thus I like this style! And most developers gets html wrong.</p>
+<p>You can follow me at <a href="https://github.com/buraktamturk/">github</a> (i like to publish open-source stuffs), <a href="https://twitter.com/buraktamturk">twitter</a> (not writing in English but eh)</p>
+<h2>Recently Posted</h2>
+<ul>
+	@foreach(var post in Model) {
+		<li>@post.First().created_at - <a href="/@(post.Last().path).html">@post.Last().title</a></li>
+	}
+</ul>
