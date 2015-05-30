@@ -6,7 +6,7 @@ using Microsoft.AspNet.Routing;
 using Microsoft.AspNet.Diagnostics;
 using Microsoft.Framework.DependencyInjection;
 using Microsoft.Framework.ConfigurationModel;
-using Microsoft.AspNet.Mvc.ModelBinding;
+using Microsoft.AspNet.Mvc.OptionDescriptors;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNet.Mvc;
@@ -16,36 +16,23 @@ using org.buraktamturk.web.Models;
 
 namespace org.buraktamturk.web
 {
-    
-    public class ScopedTest : IDisposable {
-        
-        public ScopedTest() {
-            Console.WriteLine("Created!");
-        }
-        
-        public void Dispose() {
-            Console.WriteLine("Disposed!");
-        }
-    }
-    
     public class Startup
     {
         public static IConfiguration config;
         
         public Startup(IHostingEnvironment env)
         {
-            config = new Configuration(".")
-                .AddJsonFile("config.json", true);
+            config = new Configuration()
+                .AddJsonFile("./config.json", true);
         }
         
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors().AddMvc().ConfigureMvc(settings => {
-    	       settings.ModelBinders.Add(new AuthorModelBinder());
+    	       settings.ModelBinders.Add(new ModelBinderDescriptor(typeof(AuthorModelBinder)));
             });
             
             services.AddScoped<DatabaseContext>();
-            services.AddScoped<ScopedTest>();
         }
 
         public void ConfigureDevelopment(IApplicationBuilder app) {

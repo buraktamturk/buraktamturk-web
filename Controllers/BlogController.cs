@@ -29,17 +29,9 @@ namespace org.buraktamturk.web.Controllers {
 	
 	public class BlogController : Controller {
 		DatabaseContext db;
-		
-		ScopedTest e;
-	
-		public BlogController(DatabaseContext db, ScopedTest e) {
-			this.db = db;
-			this.e = e;
-		}
 
-		[HttpGet("/blank.html")]
-		public async Task<ActionResult> Indexha() {
-			return View("Blank");
+		public BlogController(DatabaseContext db) {
+			this.db = db;
 		}
 		
 		[HttpGet("/")]
@@ -50,7 +42,7 @@ namespace org.buraktamturk.web.Controllers {
 		[HttpGet("/atom.xml")]
 		public async Task<ViewResult> rss() {
 			ViewResult res = View("atom", await db.posts.Where(a => a.lang == "EN" && a.show == true && a.active == true).OrderByDescending(a => a.id).Join(db.authors, a => a.author, a => a.id, (pos, author) => new AuthorPost { post = pos, author = author }).GroupBy(a => a.post.id).Select(a => a.OrderBy(b => b.post.version)).ToListAsync());
-			res.ContentType = new MediaTypeHeaderValue("application/atom+xml");
+			//res.ContentType = new MediaTypeHeaderValue("application/atom+xml");
 			return res;
 		}
 		
