@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Data.Entity;
 using org.buraktamturk.web.Models;
 using Microsoft.Net.Http.Headers;
-using org.buraktamturk.web;
+using org.buraktamturk.web.Utils;
 
 namespace org.buraktamturk.web.Controllers {
 	
@@ -40,10 +40,15 @@ namespace org.buraktamturk.web.Controllers {
 		}
 		
 		[HttpGet("/atom.xml")]
-		public async Task<ViewResult> rss() {
-			ViewResult res = View("atom", await db.posts.Where(a => a.lang == "EN" && a.show == true && a.active == true).OrderByDescending(a => a.id).Join(db.authors, a => a.author, a => a.id, (pos, author) => new AuthorPost { post = pos, author = author }).GroupBy(a => a.post.id).Select(a => a.OrderBy(b => b.post.version)).ToListAsync());
-			//res.ContentType = new MediaTypeHeaderValue("application/atom+xml");
-			return res;
+		public async Task<ActionResult> atom() {
+			ViewData.Model = await db.posts.Where(a => a.lang == "EN" && a.show == true && a.active == true).OrderByDescending(a => a.id).Join(db.authors, a => a.author, a => a.id, (pos, author) => new AuthorPost { post = pos, author = author }).GroupBy(a => a.post.id).Select(a => a.OrderBy(b => b.post.version)).ToListAsync();
+		
+			return new ContentTypedViewResult() {
+				ViewName = "atom",
+				ViewData = ViewData,
+                TempData = TempData,
+				ContentType = new MediaTypeHeaderValue("application/atom+xml")
+			};
 		}
 		
 		[HttpPut("/{path}.html")]
