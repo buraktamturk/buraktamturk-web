@@ -42,7 +42,7 @@ namespace org.buraktamturk.web.Controllers {
 		[HttpGet("/atom.xml")]
 		public async Task<ActionResult> atom() {
 			ViewData.Model = await db.posts.Where(a => a.lang == "EN" && a.show == true && a.active == true).OrderByDescending(a => a.id).Join(db.authors, a => a.author, a => a.id, (pos, author) => new AuthorPost { post = pos, author = author }).GroupBy(a => a.post.id).Select(a => a.OrderBy(b => b.post.version)).ToListAsync();
-		
+
 			return new ContentTypedViewResult() {
 				ViewName = "atom",
 				ViewData = ViewData,
@@ -51,8 +51,40 @@ namespace org.buraktamturk.web.Controllers {
 			};
 		}
 		
+		/*
+		[HttpGet("/sitemap.xml")]
+		public async Task<ActionResult> sitemap() {
+			ViewData.Model = await db.posts.Where(a => a.lang == "EN" && a.show == true && a.active == true).OrderByDescending(a => a.id).Join(db.authors, a => a.author, a => a.id, (pos, author) => new AuthorPost { post = pos, author = author }).GroupBy(a => a.post.id).Select(a => a.OrderBy(b => b.post.version)).ToListAsync();
+
+			return new ContentTypedViewResult() {
+				ViewName = "sitemap",
+				ViewData = ViewData,
+                TempData = TempData,
+				ContentType = new MediaTypeHeaderValue("application/xml")
+			};
+		}
+		*/
+		
+		[HttpPut("/{path}.html/{state}")]
+		[HttpDelete("/{path}.html/{state}")]
+		public async Task<JsonResult> changeShowStatePost(authors Author, string path, string title, int rev, string hl, string state) {
+			posts post = await db.posts.FirstOrDefaultAsync(a => a.path == path && a.version == rev && a.lang == hl.ToUpper());
+			bool val = Context.Request.Method == "PUT" ? true : false;
+			
+			if(state == "show") {
+				post.show = val;
+			} else if(state == "active") {
+				post.active = val;
+			} else {
+				throw new Exception("Invalid state");
+			}
+			
+			await db.SaveChangesAsync();
+			return Json(new { success = true });
+		}
+		
 		[HttpPut("/{path}.html")]
-		public async Task<JsonResult> putPost(authors Author, string path, string title, int rev, string hl) {
+		public async Task<JsonResult> putPost(authors Author, string path, string title, int rev, string hl, bool? show, bool? active) {
 			posts Post = new posts();
 			
 			posts oldpost = await db.posts.FirstOrDefaultAsync(a => a.path == path && a.version == rev && a.lang == hl.ToUpper());
@@ -78,6 +110,12 @@ namespace org.buraktamturk.web.Controllers {
 				Post.path = path;
 				Post.author = Author.id;
 			}
+			
+			if(show != null)
+				Post.show = show.Value;
+				
+			if(active != null)
+				Post.active = active.Value;
 			
 			Post.data = await new StreamReader(Request.Body, Encoding.UTF8).ReadToEndAsync();
 			

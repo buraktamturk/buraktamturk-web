@@ -5,8 +5,10 @@
 		<title>@ViewBag.title</title>
 		
 		@RenderSection("meta", required: false)
+		
+		<meta name='viewport' content='width=device-width, initial-scale=1' />
 		<meta content='Burak Tamturks Offical Blog' property='og:site_name' />
-		<link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Burak Tamturk's Blog'" />
+		<link href='/atom.xml'' type='application/atom+xml' rel='alternate' title='Burak Tamturks Blog' />
 		
 	    <style>
 	      body {
@@ -64,8 +66,6 @@
 		<script src="/assets/highlight.pack.js" onload="window.hljs.initHighlightingOnLoad();" async defer></script>
 	</head>
 	<body>
-		
 		@RenderBody()
-		
 	</body>
 </html>
