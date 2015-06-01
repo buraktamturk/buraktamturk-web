@@ -2,14 +2,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 	<title>Burak Tamturk's offical blog</title>
-	<link href="http://www.buraktamturk.org/" />
+	<link href="http://buraktamturk.org/" />
 	<copyright>Copyright 2015 Burak Tamtürk</copyright>
 	<language>en-us</language>
 	<updated>@Model.First().Last().post.created_at.ToString("yyyy-mm-ddThh:mm:ssZ")</updated>
 	@foreach(var post in Model) {
 	<entry>
 		<title>@post.Last().post.title</title>
-		<link href="http://www.buraktamturk.org/@(post.Last().post.path).html" />
+		<link href="http://buraktamturk.org/@(post.Last().post.path).html" />
 		<summary>@Html.Raw(@post.Last().post.summary())</summary>
 		<published>@post.First().post.created_at.ToString("yyyy-mm-ddThh:mm:ssZ")</published>
 		<updated>@post.Last().post.created_at.ToString("yyyy-mm-ddThh:mm:ssZ")</updated>

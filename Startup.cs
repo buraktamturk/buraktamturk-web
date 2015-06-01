@@ -43,7 +43,16 @@ namespace org.buraktamturk.web
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseCors(policy => policy.AllowAnyMethod().AllowAnyOrigin().WithHeaders("Token"))
+            app
+                .Use(async (a, b) => {
+                    if(a.Request.Host.Value == "www.buraktamturk.org") {
+                       a.Response.StatusCode = 301;
+                	   a.Response.Headers.Set("Location", a.Request.Scheme + "://buraktamturk.org" + a.Request.Path);
+                    } else {
+                        await b();
+                    }
+                })
+                .UseCors(policy => policy.AllowAnyMethod().AllowAnyOrigin().WithHeaders("Token"))
                .UseStaticFiles()
                .UseMvc();
         }

@@ -9,7 +9,6 @@
 		<meta name='viewport' content='width=device-width, initial-scale=1' />
 		<meta content='Burak Tamturks Offical Blog' property='og:site_name' />
 		<link href='/atom.xml'' type='application/atom+xml' rel='alternate' title='Burak Tamturks Blog' />
-		
 	    <style>
 	      body {
 	        max-width: 40em;
@@ -62,8 +61,46 @@
 	        white-space: nowrap;
 	      }
 	    </style>
+		<style>
+			@@media print {
+				#disqus_thread {
+					display: none;
+				}
+			}
+		</style>
 		<link rel="stylesheet" href="/assets/styles/xcode.css" />
-		<script src="/assets/highlight.pack.js" onload="window.hljs.initHighlightingOnLoad();" async defer></script>
+		<script>
+			function ready(fnc) {
+				if(!ready.called) {
+					ready.fnc = [];
+					ready.called = 1;
+					
+					(function(fn) {
+						if (document.readyState != 'loading'){
+							fn();
+						} else if (document.addEventListener) {
+							document.addEventListener('DOMContentLoaded', fn);
+						} else {
+							document.attachEvent('onreadystatechange', function() {
+								if (document.readyState != 'loading')
+									fn();
+							});
+						}
+					})(function() {
+						ready.called = 2;
+						fnc();
+						
+						while(fnc = ready.fnc.pop()) 
+							fnc();
+					});
+				} else if(ready.called == 1) {
+					ready.fnc.push(fnc);
+				} else {
+					fnc();
+				}
+			}
+		</script>
+		<script src="/assets/highlight.pack.js" onload="ready(window.hljs.initHighlightingOnLoad);" async defer></script>
 	</head>
 	<body>
 		@RenderBody()
