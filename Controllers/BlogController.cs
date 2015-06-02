@@ -65,8 +65,8 @@ namespace org.buraktamturk.web.Controllers {
 		}
 		*/
 		
-		[HttpPut("/{path}.html/{state}")]
-		[HttpDelete("/{path}.html/{state}")]
+		[HttpPut("/{*path}.html/{state}")]
+		[HttpDelete("/{*path}.html/{state}")]
 		public async Task<JsonResult> changeShowStatePost(authors Author, string path, string title, int rev, string hl, string state) {
 			posts post = await db.posts.FirstOrDefaultAsync(a => a.path == path && a.version == rev && a.lang == hl.ToUpper());
 			bool val = Context.Request.Method == "PUT" ? true : false;
@@ -83,7 +83,7 @@ namespace org.buraktamturk.web.Controllers {
 			return Json(new { success = true });
 		}
 		
-		[HttpPut("/{path}.html")]
+		[HttpPut("/{*path}.html")]
 		public async Task<JsonResult> putPost(authors Author, string path, string title, int rev, string hl, bool? show, bool? active) {
 			posts Post = new posts();
 			
@@ -127,7 +127,7 @@ namespace org.buraktamturk.web.Controllers {
 			return Json(new { success = true });
 		}
 		
-		[HttpGet("/{path}.html")]
+		[HttpGet("/{*path}.html")]
 		public async Task<ActionResult> getPost(string path) {
 			var post = db.posts.Where(a => a.path == path).OrderByDescending(a => a.version).First();
 			var model = await db.posts
