@@ -37,7 +37,7 @@ namespace org.buraktamturk.web
 
         public void ConfigureDevelopment(IApplicationBuilder app) {
            // app.UseBrowserLink();
-            app.UseErrorPage(ErrorPageOptions.ShowAll);
+         //   app.UseErrorPage(ErrorPageOptions.ShowAll);
             Configure(app);
         }
 
