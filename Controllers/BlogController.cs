@@ -87,10 +87,19 @@ namespace org.buraktamturk.web.Controllers {
         */
 		
 		[HttpPut("/{path}.html")]
-		public async Task<JsonResult> putPost(authors Author, string path, string title, int rev, string hl, bool? show, bool? active) {
+        [HttpPut("/{path1}/{path}.html")]
+        [HttpPut("/{path1}/{path2}/{path}.html")]
+        [HttpPut("/{path1}/{path2}/{path3}/{path}.html")]
+        [HttpPut("/{path1}/{path2}/{path3}/{path4}/{path}.html")]
+        public async Task<JsonResult> putPost(authors Author, string path1, string path2, string path3, string path4, string path, string title, int rev, string hl, bool? show, bool? active) {
 			posts Post = new posts();
-			
-			posts oldpost = await db.posts.FirstOrDefaultAsync(a => a.path == path && a.version == rev && a.lang == hl.ToUpper());
+
+            string pathlast = string.Join("/", new string[]
+            {
+                            path1, path2, path3, path4, path
+            }.Where(a => a != null));
+
+            posts oldpost = await db.posts.FirstOrDefaultAsync(a => a.path == pathlast && a.version == rev && a.lang == hl.ToUpper());
 			if(oldpost != null) {
 				Post = oldpost;
 			} else {
@@ -110,7 +119,7 @@ namespace org.buraktamturk.web.Controllers {
 				Post.created_at = DateTime.Now;
 				Post.version = rev;
 				Post.lang = hl.ToUpper();
-				Post.path = path;
+				Post.path = pathlast;
 				Post.author = Author.id;
 			}
 			
@@ -131,8 +140,18 @@ namespace org.buraktamturk.web.Controllers {
 		}
 		
 		[HttpGet("/{path}.html")]
-		public async Task<ActionResult> getPost(string path) {
-			var post = db.posts.Where(a => a.path == path).OrderByDescending(a => a.version).First();
+        [HttpGet("/{path1}/{path}.html")]
+        [HttpGet("/{path1}/{path2}/{path}.html")]
+        [HttpGet("/{path1}/{path2}/{path3}/{path}.html")]
+        [HttpGet("/{path1}/{path2}/{path3}/{path4}/{path}.html")]
+        public async Task<ActionResult> getPost(string path1, string path2, string path3, string path4, string path) {
+
+            string pathlast = string.Join("/", new string[]
+            {
+                path1, path2, path3, path4, path
+            }.Where(a => a != null));
+
+			var post = db.posts.Where(a => a.path == pathlast).OrderByDescending(a => a.version).First();
 			var model = await db.posts
 				.OrderByDescending(a => a.version)
 				.Where(a => a.id == post.id && a.active == true)
@@ -164,7 +183,7 @@ namespace org.buraktamturk.web.Controllers {
 			
 			Response.Headers.Add("Last-Modified", new String[] {model.post.post.created_at.ToUniversalTime().ToString("R")});
 			
-			if(model.post.post.path != path) {
+			if(model.post.post.path != pathlast) {
 				return Redirect("/" + model.post.post.path + ".html");
 			}
 			
