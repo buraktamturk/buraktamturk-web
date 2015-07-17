@@ -40,6 +40,7 @@ namespace org.buraktamturk.web.Controllers {
 					.OrderByDescending(a => a.id)
 					.Select(a => a.revisions.Where(b => b.active == true))
 					.Select(a => a.Where(b => b.lang == "EN" && b.active == true))
+                    .Where(a => a.Any())
 				 	.ToListAsync()
 			);
 		}
@@ -47,13 +48,13 @@ namespace org.buraktamturk.web.Controllers {
 		[HttpGet("/atom.xml")]
 		public async Task<ActionResult> atom() {
       var v = View("atom", await db.posts
-								.Include(a => a.revisions.Select(b => b.author))
-								.Where(a => a.active == true && a.show == true)
-								.OrderByDescending(a => a.id)
-								.Select(a => a.revisions.Where(b => b.active == true))
-								.Select(a => a.Where(b => b.lang == "EN" && b.active == true))
-								.Where(a => a != null)
-							 	.ToListAsync());
+                    .Include(a => a.revisions.Select(b => b.author))
+                    .Where(a => a.active == true && a.show == true)
+                    .OrderByDescending(a => a.id)
+                    .Select(a => a.revisions.Where(b => b.active == true))
+                    .Select(a => a.Where(b => b.lang == "EN" && b.active == true))
+                    .Where(a => a.Any())
+                     .ToListAsync());
 
       v.ContentType = new MediaTypeHeaderValue("application/atom+xml");
 
@@ -65,7 +66,7 @@ namespace org.buraktamturk.web.Controllers {
     [HttpPut("/{path1}/{path2}/{path}.html")]
     [HttpPut("/{path1}/{path2}/{path3}/{path}.html")]
     [HttpPut("/{path1}/{path2}/{path3}/{path4}/{path}.html")]
-    public async Task<JsonResult> putPost(author Author, string path1, string path2, string path3, string path4, string path, string title, string hl, bool? active) {
+    public async Task<JsonResult> putPost(author Author, string path1, string path2, string path3, string path4, string path, string title, string hl, bool? show, bool? active) {
       string pathlast = string.Join("/", new string[]
       {
         path1, path2, path3, path4, path
@@ -73,12 +74,16 @@ namespace org.buraktamturk.web.Controllers {
 
       hl = hl ?? "EN";
 
-      post post;
-			post = await db.posts.FirstOrDefaultAsync(a => a.revisions.Any(b => b.path == pathlast && b.lang == hl.ToUpper()));
-			if(post == null) {
-        post = new post();
-				db.posts.Add(post);
-      }
+        post post;
+        post = await db.posts.FirstOrDefaultAsync(a => a.revisions.Any(b => b.path == pathlast && b.lang == hl.ToUpper()));
+        if(post == null) {
+            post = new post();
+            post.created_at = DateTime.Now;
+            post.author_id = Author.id;
+            post.show = show ?? true;
+            post.active = active ?? true;
+            db.posts.Add(post);
+        }
 
       revision r = new revision();
 			r.post = post;
@@ -89,7 +94,7 @@ namespace org.buraktamturk.web.Controllers {
 			r.lang = hl.ToUpper();
 			r.path = pathlast;
 			r.author_id = Author.id;
-			r.active = active.Value;
+			r.active = active ?? true;
 
 			r.data = await new StreamReader(Request.Body, Encoding.UTF8).ReadToEndAsync();
 
@@ -98,7 +103,13 @@ namespace org.buraktamturk.web.Controllers {
 			return Json(new { post_id = post.id, revision_id = r.id });
 		}
 
-		[HttpGet("/{path}.html")]
+        private static DateTime RoundToSecond(DateTime dt)
+        {
+            return new DateTime(dt.Year, dt.Month, dt.Day,
+                                dt.Hour, dt.Minute, dt.Second);
+        }
+
+        [HttpGet("/{path}.html")]
     [HttpGet("/{path1}/{path}.html")]
     [HttpGet("/{path1}/{path2}/{path}.html")]
     [HttpGet("/{path1}/{path2}/{path3}/{path}.html")]
@@ -110,9 +121,9 @@ namespace org.buraktamturk.web.Controllers {
       }.Where(a => a != null));
 
 			var model = await db.posts
-				.Where(a => a.active == true && a.revisions.Any(b => b.path == pathlast))
+                .Include(a => a.revisions.Select(b => b.author))
+                .Where(a => a.active == true && a.revisions.Any(b => b.path == pathlast))
 				.Select(a => a.revisions.Where(b => b.active == true))
-				.Include(a => a.Select(b => b.author))
 				.Select(a => new PostModel() {
 					// current post
 					post = a.Where(b => b.lang == "EN").OrderByDescending(b => b.id).FirstOrDefault(),
@@ -131,8 +142,10 @@ namespace org.buraktamturk.web.Controllers {
 
 			var lastModified = Request.Headers["If-Modified-Since"];
 			if (lastModified != null) {
-            	var modifiedSince = DateTime.Parse(lastModified);
-            	if (modifiedSince >= model.post.created_at.ToUniversalTime()) {
+            	var modifiedSince = RoundToSecond(DateTime.Parse(lastModified));
+                var toCompare = RoundToSecond(model.post.created_at);
+
+                if (modifiedSince >= toCompare) {
                 	return new HttpStatusCodeResult(304);
             	}
         	}

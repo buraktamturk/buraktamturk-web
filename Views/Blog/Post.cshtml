@@ -1,6 +1,6 @@
 @model org.buraktamturk.web.Controllers.PostModel
 @{
-	ViewBag.title = Model.post.post.title;
+	ViewBag.title = Model.post.title;
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @section meta {
@@ -8,7 +8,7 @@
 	<meta content='@Model.post.title' property='og:title'/>
 }
 <h1>@Model.post.title</h1>
-<p>by <strong>@Model.first.author.name</strong> (<a href="#">@Model.first.author.mail</a>) at @Model.first.created_at @if(Model.first.post != Model.post.post) { <br /><span>last modified at @Model.post.created_at</span> }</p>
+<p>by <strong>@Model.first.author.name</strong> (<a href="#">@Model.first.author.mail</a>) at @Model.first.created_at @if(Model.first != Model.post) { <br /><span>last modified at @Model.post.created_at</span> }</p>
 @Html.Raw(Model.post.data)
 <div id="disqus_thread"></div>
 <script src="//buraktamturk.disqus.com/embed.js" async defer></script>
