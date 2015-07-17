@@ -37,7 +37,7 @@ namespace org.buraktamturk.web.Controllers {
 				await db.posts
 					.Where(a => a.active == true && a.show == true)
 					.OrderByDescending(a => a.id)
-					.Select(a => a.revisions.Include(b => b.author).Where(b => b.active == true))
+					.Select(a => a.revisions.AsQueryable().Include(b => b.author).Where(b => b.active == true))
 					.Select(a => a.Where(b => b.lang == "EN" && b.active == true))
 				 	.ToListAsync()
 			);
@@ -48,7 +48,7 @@ namespace org.buraktamturk.web.Controllers {
       var v = View("atom", await db.posts
 								.Where(a => a.active == true && a.show == true)
 								.OrderByDescending(a => a.id)
-								.Select(a => a.revisions.Include(b => b.author).Where(b => b.active == true))
+								.Select(a => a.revisions.AsQueryable().Include(b => b.author).Where(b => b.active == true))
 								.Select(a => a.Where(b => b.lang == "EN" && b.active == true))
 								.Where(a => a != null)
 							 	.ToListAsync());

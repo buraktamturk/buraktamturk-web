@@ -34,7 +34,7 @@ namespace org.buraktamturk.web.Models
 		public DateTime created_at { get; set; }
 
 		[ForeignKey("post_id")]
-		public virtual IQueryable<revision> revisions { get; set; }
+		public virtual ICollection<revision> revisions { get; set; }
 
 		[ForeignKey("author_id")]
 		public virtual author author { get; set; }
