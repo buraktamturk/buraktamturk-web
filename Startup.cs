@@ -5,8 +5,10 @@ using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Routing;
 using Microsoft.AspNet.Diagnostics;
 using Microsoft.Framework.DependencyInjection;
-using Microsoft.Framework.ConfigurationModel;
-using Microsoft.AspNet.Mvc.OptionDescriptors;
+using Microsoft.Framework.Configuration;
+using Microsoft.AspNet.Http.Features;
+using Microsoft.Framework.Runtime;
+using Microsoft.AspNet.Mvc.ModelBinding;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNet.Mvc;
@@ -19,25 +21,25 @@ namespace org.buraktamturk.web
     public class Startup
     {
         public static IConfiguration config;
-        
-        public Startup(IHostingEnvironment env)
+
+        public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
-            config = new Configuration()
-                .AddJsonFile("./config.json", true);
+            config = new ConfigurationBuilder(appEnv.ApplicationBasePath)
+                .AddJsonFile("./config.json").Build();
         }
-        
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors().AddMvc().ConfigureMvc(settings => {
-    	       settings.ModelBinders.Add(new ModelBinderDescriptor(typeof(AuthorModelBinder)));
+              settings.ModelBinders.Add(new AuthorModelBinder());
             });
-            
+
             services.AddScoped<DatabaseContext>();
         }
 
         public void ConfigureDevelopment(IApplicationBuilder app) {
-           // app.UseBrowserLink();
-         //   app.UseErrorPage(ErrorPageOptions.ShowAll);
+            app.UseErrorPage(ErrorPageOptions.ShowAll);
+
             Configure(app);
         }
 
@@ -45,12 +47,12 @@ namespace org.buraktamturk.web
         {
             app
                 .Use(async (a, b) => {
-                    if(a.Request.Host.Value == "www.buraktamturk.org") {
-                       a.Response.StatusCode = 301;
-                	   a.Response.Headers.Set("Location", a.Request.Scheme + "://buraktamturk.org" + a.Request.Path);
-                    } else {
-                        await b();
-                    }
+                  if(a.Request.Host.Value == "www.buraktamturk.org") {
+                    a.Response.StatusCode = 301;
+              	    a.Response.Headers.Set("Location", a.Request.Scheme + "://buraktamturk.org" + a.Request.Path);
+                  } else {
+                    await b();
+                  }
                 })
                 .UseCors(policy => policy.AllowAnyMethod().AllowAnyOrigin().WithHeaders("Token"))
                .UseStaticFiles()
