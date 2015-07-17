@@ -35,9 +35,10 @@ namespace org.buraktamturk.web.Controllers {
 		public async Task<ActionResult> Index() {
 			return View("Home",
 				await db.posts
+					.Include(a => a.revisions.Select(b => b.author))
 					.Where(a => a.active == true && a.show == true)
 					.OrderByDescending(a => a.id)
-					.Select(a => a.revisions.AsQueryable().Include(b => b.author).Where(b => b.active == true))
+					.Select(a => a.revisions.Where(b => b.active == true))
 					.Select(a => a.Where(b => b.lang == "EN" && b.active == true))
 				 	.ToListAsync()
 			);
@@ -46,9 +47,10 @@ namespace org.buraktamturk.web.Controllers {
 		[HttpGet("/atom.xml")]
 		public async Task<ActionResult> atom() {
       var v = View("atom", await db.posts
+								.Include(a => a.revisions.Select(b => b.author))
 								.Where(a => a.active == true && a.show == true)
 								.OrderByDescending(a => a.id)
-								.Select(a => a.revisions.AsQueryable().Include(b => b.author).Where(b => b.active == true))
+								.Select(a => a.revisions.Where(b => b.active == true))
 								.Select(a => a.Where(b => b.lang == "EN" && b.active == true))
 								.Where(a => a != null)
 							 	.ToListAsync());
@@ -110,6 +112,7 @@ namespace org.buraktamturk.web.Controllers {
 			var model = await db.posts
 				.Where(a => a.active == true && a.revisions.Any(b => b.path == pathlast))
 				.Select(a => a.revisions.Where(b => b.active == true))
+				.Include(a => a.Select(b => b.author))
 				.Select(a => new PostModel() {
 					// current post
 					post = a.Where(b => b.lang == "EN").OrderByDescending(b => b.id).FirstOrDefault(),

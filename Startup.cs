@@ -37,15 +37,10 @@ namespace org.buraktamturk.web
             services.AddScoped<DatabaseContext>();
         }
 
-        public void ConfigureDevelopment(IApplicationBuilder app) {
-            app.UseErrorPage(ErrorPageOptions.ShowAll);
-
-            Configure(app);
-        }
-
         public void Configure(IApplicationBuilder app)
         {
             app
+                .UseErrorPage(ErrorPageOptions.ShowAll)
                 .Use(async (a, b) => {
                   if(a.Request.Host.Value == "www.buraktamturk.org") {
                     a.Response.StatusCode = 301;
