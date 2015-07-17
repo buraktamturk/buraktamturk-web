@@ -19,7 +19,7 @@ namespace org.buraktamturk.web.Models {
 				var requestServices = bindingContext.OperationBindingContext.HttpContext.RequestServices;
         DatabaseContext db = (DatabaseContext)requestServices.GetService(typeof(DatabaseContext));
 
-        if (bindingContext.ModelType == typeof(authors))
+        if (bindingContext.ModelType == typeof(author))
         {
 					var a = bindingContext.OperationBindingContext.HttpContext.Request.Headers.Get("Token");
 					Match match = Regex.Match(a, @"user=(.*?);\s*password=(.*?);", RegexOptions.IgnoreCase);
@@ -29,7 +29,7 @@ namespace org.buraktamturk.web.Models {
 					}
 
 					string user = match.Groups[1].Value, pass = match.Groups[2].Value;
-					authors b = await db.authors.FirstAsync(c => c.mail == user && c.password == pass);
+					author b = await db.authors.FirstAsync(c => c.mail == user && c.password == pass);
 
 					return new ModelBindingResult(b, bindingContext.ModelName, true);
 				}

@@ -15,7 +15,9 @@
         "Microsoft.Framework.Logging": "1.0.0-beta5",
         "Microsoft.Framework.Logging.Console": "1.0.0-beta5",
         "Microsoft.Framework.DependencyInjection": "1.0.0-beta5",
-        "Kestrel": "1.0.0-beta5"
+        "Kestrel": "1.0.0-beta5",
+        "System.Data.SQLite": "1.0.97",
+        "MarkdownSharp": "1.13.0"
     },
     "commands": {
         "web": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.WebListener --server.urls http://localhost:5001",
