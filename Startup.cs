@@ -15,17 +15,26 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Internal;
 using System.Data.Entity;
 using org.buraktamturk.web.Models;
+using MarkdownDeep;
 
 namespace org.buraktamturk.web
 {
     public class Startup
     {
+        public static Markdown md { get; set; }
+
         public static IConfiguration config;
 
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
             config = new ConfigurationBuilder(appEnv.ApplicationBasePath)
                 .AddJsonFile("./config.json").Build();
+
+            md = new Markdown()
+            {
+                ExtraMode = true,
+                
+            };
         }
 
         public void ConfigureServices(IServiceCollection services)

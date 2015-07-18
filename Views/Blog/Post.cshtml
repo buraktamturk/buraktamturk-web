@@ -9,6 +9,6 @@
 }
 <h1>@Model.post.title</h1>
 <p>by <strong>@Model.first.author.name</strong> (<a href="#">@Model.first.author.mail</a>) at @Model.first.created_at @if(Model.first != Model.post) { <br /><span>last modified at @Model.post.created_at</span> }</p>
-@Html.Raw(Model.post.data)
+@Html.Raw(org.buraktamturk.web.Startup.md.Transform(Model.post.data))
 <div id="disqus_thread"></div>
 <script src="//buraktamturk.disqus.com/embed.js" async defer></script>
