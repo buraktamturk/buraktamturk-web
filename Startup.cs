@@ -49,7 +49,7 @@ namespace org.buraktamturk.web
         public void Configure(IApplicationBuilder app)
         {
             app
-                .UseErrorPage(ErrorPageOptions.ShowAll)
+                .UseErrorPage()
                 .Use(async (a, b) => {
                   if(a.Request.Host.Value == "www.buraktamturk.org") {
                     a.Response.StatusCode = 301;
