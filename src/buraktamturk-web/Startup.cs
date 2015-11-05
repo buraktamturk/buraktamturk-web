@@ -7,7 +7,6 @@ using Microsoft.AspNet.Diagnostics;
 using Microsoft.Framework.DependencyInjection;
 using Microsoft.Framework.Configuration;
 using Microsoft.AspNet.Http.Features;
-using Microsoft.Framework.Runtime;
 using Microsoft.AspNet.Mvc.ModelBinding;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +15,7 @@ using Microsoft.AspNet.Mvc.Internal;
 using System.Data.Entity;
 using org.buraktamturk.web.Models;
 using MarkdownDeep;
+using Microsoft.Dnx.Runtime;
 
 namespace org.buraktamturk.web
 {
@@ -39,11 +39,13 @@ namespace org.buraktamturk.web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors().AddMvc().ConfigureMvc(settings => {
+            services.AddCors().AddMvc(settings => {
               settings.ModelBinders.Add(new AuthorModelBinder());
             });
 
-            services.AddScoped<DatabaseContext>();
+            var connStr = Startup.config.GetSection("db").Value;
+
+            services.AddScoped<DatabaseContext>(a => new DatabaseContext(connStr));
         }
 
         public void Configure(IApplicationBuilder app)

@@ -88,12 +88,12 @@ namespace org.buraktamturk.web.Models
 
 		public DbSet<revision> revision { get; set; }
 
-    public DatabaseContext() : base(Startup.config.Get("db")) {
+        public DatabaseContext(string connStr) : base(connStr) {
 
-    }
+        }
 
-    protected override void OnModelCreating(DbModelBuilder modelBuilder) {
-        modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-    }
+        protected override void OnModelCreating(DbModelBuilder modelBuilder) {
+            modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+        }
 	}
 }

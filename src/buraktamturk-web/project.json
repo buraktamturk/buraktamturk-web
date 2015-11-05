@@ -1,0 +1,42 @@
+{
+    "webroot": "wwwroot",
+    "version": "1.0.0-*",
+    "dependencies": {
+        "Microsoft.AspNet.Server.IIS": "1.0.0-beta7",
+        "Microsoft.AspNet.Mvc": "6.0.0-beta7",
+        "Microsoft.AspNet.Mvc.Razor": "6.0.0-beta7",
+        "Microsoft.AspNet.StaticFiles": "1.0.0-beta7",
+        "Microsoft.AspNet.Diagnostics": "1.0.0-beta7",
+        "Microsoft.AspNet.Cors": "1.0.0-beta7",
+        "Microsoft.AspNet.Server.WebListener": "1.0.0-beta7",
+        "Microsoft.Framework.Configuration": "1.0.0-beta7",
+        "Microsoft.Framework.Configuration.Json": "1.0.0-beta7",
+        "EntityFramework": "6.1.3.0",
+        "Microsoft.Framework.DependencyInjection": "1.0.0-beta7",
+        "Microsoft.AspNet.Server.Kestrel": "1.0.0-beta7",
+        "MarkdownDeep.NET-Signed": "1.5.0"
+    },
+    "commands": {
+        "web": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.WebListener --server.urls http://localhost:5001",
+        "kestrel": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://localhost:5004"
+    },
+    "frameworks": {
+        "dnx451": {
+            "frameworkAssemblies": {
+
+            }
+        }
+    },
+    "exclude": [
+        "wwwroot",
+        "node_modules",
+        "bower_components"
+    ],
+    "publishExclude": [
+        "node_modules",
+        "bower_components",
+        "**.kproj",
+        "**.user",
+        "**.vspscc"
+    ]
+}
