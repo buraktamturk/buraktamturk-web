@@ -49,10 +49,13 @@ namespace org.buraktamturk.web
             app
                 .UseErrorPage()
                 .Use(async (a, b) => {
-                  if(a.Request.Host.Value == "www.buraktamturk.org") {
+                if (a.Request.Host.Value == "www.buraktamturk.org") {
                     a.Response.StatusCode = 301;
-              	    a.Response.Headers.Set("Location", a.Request.Scheme + "://buraktamturk.org" + a.Request.Path);
-                  } else {
+                    a.Response.Headers.Set("Location", a.Request.Scheme + "://buraktamturk.org" + a.Request.Path);
+                } else if (a.Request.Host.Value == "www.buraktamturk.com.tr") {
+                    a.Response.StatusCode = 301;
+                    a.Response.Headers.Set("Location", a.Request.Scheme + "://buraktamturk.com.tr" + a.Request.Path);
+                } else {
                     await b();
                   }
                 })
