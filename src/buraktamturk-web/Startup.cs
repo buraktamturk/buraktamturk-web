@@ -21,20 +21,12 @@ namespace org.buraktamturk.web
 {
     public class Startup
     {
-        public static Markdown md { get; set; }
-
-        public static IConfiguration config;
+        private IConfiguration config;
 
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
             config = new ConfigurationBuilder(appEnv.ApplicationBasePath)
                 .AddJsonFile("./config.json").Build();
-
-            md = new Markdown()
-            {
-                ExtraMode = true,
-                
-            };
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -43,9 +35,13 @@ namespace org.buraktamturk.web
               settings.ModelBinders.Add(new AuthorModelBinder());
             });
 
-            var connStr = Startup.config.GetSection("db").Value;
+            var connStr = config.GetSection("db").Value;
 
             services.AddScoped<DatabaseContext>(a => new DatabaseContext(connStr));
+            services.AddInstance(new Markdown()
+            {
+                ExtraMode = true
+            });
         }
 
         public void Configure(IApplicationBuilder app)
